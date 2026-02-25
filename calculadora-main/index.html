@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora Pro</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f4f4f4; }
+        .calc { background: #333; padding: 20px; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        #display { width: 100%; height: 50px; margin-bottom: 10px; text-align: right; font-size: 24px; padding: 10px; box-sizing: border-box; }
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        button { padding: 20px; font-size: 18px; cursor: pointer; border: none; border-radius: 5px; }
+        button:hover { background: #ddd; }
+        .op { background: #ff9500; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="calc">
+    <input type="text" id="display" disabled>
+    <div class="buttons">
+        <button onclick="limpar()">C</button>
+        <button onclick="add('-')" class="op">±</button>
+        <button onclick="add('%')" class="op">%</button>
+        <button onclick="add('/')" class="op">÷</button>
+        
+        <button onclick="add('7')">7</button>
+        <button onclick="add('8')">8</button>
+        <button onclick="add('9')">9</button>
+        <button onclick="add('*')" class="op">×</button>
+        
+        <button onclick="add('4')">4</button>
+        <button onclick="add('5')">5</button>
+        <button onclick="add('6')">6</button>
+        <button onclick="add('-')" class="op">-</button>
+        
+        <button onclick="add('1')">1</button>
+        <button onclick="add('2')">2</button>
+        <button onclick="add('3')">3</button>
+        <button onclick="add('+')" class="op">+</button>
+        
+        <button onclick="add('0')" style="grid-column: span 2;">0</button>
+        <button onclick="add('.')">.</button>
+        <button onclick="calcular()" class="op">=</button>
+    </div>
+</div>
+
+<script>
+    const display = document.getElementById('display');
+
+    function add(caractere) {
+        // Impede dois operadores seguidos (exceto se o primeiro for o sinal de menos no início)
+        const ultimoChar = display.value.slice(-1);
+        const operadores = ['+', '*', '/', '%'];
+        
+        if (operadores.includes(caractere) && (display.value === "" || operadores.includes(ultimoChar))) {
+            return; // Não faz nada se tentar começar com operador inválido ou repetir operador
+        }
+        
+        display.value += caractere;
+    }
+
+    function limpar() {
+        display.value = "";
+    }
+
+    function calcular() {
+        try {
+            let expressao = display.value;
+            
+            // Tratamento de Porcentagem: substitui 'X%Y' por '(X/100)*Y' ou 'X%' por 'X/100'
+            expressao = expressao.replace(/(\d+)%/g, '($1/100)');
+
+            // O eval() processa a string. O JS aceita nativamente o "-" inicial para negativos.
+            const resultado = eval(expressao);
+            
+            if (resultado === Infinity) {
+                display.value = "Erro: Div 0";
+            } else {
+                display.value = resultado;
+            }
+        } catch (e) {
+            display.value = "Erro";
+        }
+    }
+</script>
+
+</body>
+</html>
